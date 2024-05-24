@@ -40,15 +40,15 @@ too often I had tried to drag sprites from the old "Grab" straight into
 Paint, forgetting that this trivial act was beyond its capabilities.
 
 Improvements:
-   Supports interactive help.
-   Direct data transfer to other applications.
-   Style-guide compliant user interface.
-   Support for international resources (just translate messages).
-   Doesn't rely on weird and ancient InterfaceManager module.
-   May also grab window tool icon sprites.
+- Supports interactive help.
+- Direct data transfer to other applications.
+- Style-guide compliant user interface.
+- Support for international resources (just translate messages).
+- Doesn't rely on weird and ancient InterfaceManager module.
+- May also grab window tool icon sprites.
 
 Non-improvements:
-   Requires a monstrous 36K memory to run instead of 16K.
+- Requires a monstrous 36K memory to run instead of 16K.
 
 -----------------------------------------------------------------------------
 2   Requirements
@@ -57,7 +57,7 @@ Non-improvements:
 - RISC OS 3.10 or better (OS 3.5 to grab window tools)
 - The Toolbox modules (in !System, or in ROM with RISC OS 3.6)
 
-  If any of the above facilities are unavailable then the program will fail
+If any of the above facilities are unavailable then the program will fail
 to load, with an error message describing the problem.
 
 -----------------------------------------------------------------------------
@@ -109,93 +109,93 @@ been saved, a suitable header is prepended to the file.
 ===================
 
 1.00 (5th May 2002)
-   First version.
+- First version.
 
 1.10 (19th August 2002)
-   Now allows window tool sprites to be grabbed, on RISC OS 3.5 or above.
+- Now allows window tool sprites to be grabbed, on RISC OS 3.5 or above.
 
 1.11 (10th November 2002)
-   Recompiled using the official Castle release of 32-bit Acorn C/C++.
-   Corrected mistake in !Run file where the CallASWI module was not being
+- Recompiled using the official Castle release of 32-bit Acorn C/C++.
+- Corrected mistake in !Run file where the CallASWI module was not being
     loaded on RISC OS 3.6, despite being required on all OSes prior to 3.7.
 
 1.12 (19th May 2003)
-   More sensible response to error on Toolbox_Initialise (doesn't rely on
-    messages file, which isn't open).
-   Now resets save dialogue box when cancel button is clicked.
+- More sensible response to error on Toolbox_Initialise (doesn't rely on
+  messages file, which isn't open).
+- Now resets save dialogue box when cancel button is clicked.
 
 1.13 (27th June 2003)
-   Now broadcasts Message_WindowClosed before opening the savebox, on the
-    off-chance that the window has been iconised (though you would need an
-    external iconiser to do this).
+- Now broadcasts Message_WindowClosed before opening the savebox, on the
+  off-chance that the window has been iconised (though you would need an
+  external iconiser to do this).
 
 1.14 (9th September 2003)
-   Re-released as open source software under the GNU General Public Licence.
-   Formatted the manual text for a fixed-width 77 column display (Zap's
-    default).
-   !Run file now requires version 5.43 of the SharedCLibrary, since this is
-    the earliest version documented as supporting C99 functions.
-   Now uses "NoMem" from the global messages file rather than own error
-    message.
+- Re-released as open source software under the GNU General Public Licence.
+- Formatted the manual text for a fixed-width 77 column display (Zap's
+  default).
+- !Run file now requires version 5.43 of the SharedCLibrary, since this is
+  the earliest version documented as supporting C99 functions.
+- Now uses "NoMem" from the global messages file rather than own error
+  message.
 
 Version 1.15 (2nd March 2004)
-   Re-compiled with release 9 of CBLibrary.
+- Re-compiled with release 9 of CBLibrary.
 
 Version 1.16 (26th September 2004)
-   Moved to new-style CBLibrary macro names.
-   Corrected section numbering in text manual (were two section 3s!)
-   Dialogue box is now transient & coloured appropriately.
-   Removed all code dedicated to keeping track of the last filename used
-    and restoring it upon an ADJUST-click on 'Cancel' - this is really the
-    responsibility of the SaveAs module, which may eventually be fixed in
-    this respect (as the Scale module has been already).
+- Moved to new-style CBLibrary macro names.
+- Corrected section numbering in text manual (were two section 3s!)
+- Dialogue box is now transient & coloured appropriately.
+- Removed all code dedicated to keeping track of the last filename used
+  and restoring it upon an ADJUST-click on 'Cancel' - this is really the
+  responsibility of the SaveAs module, which may eventually be fixed in
+  this respect (as the Scale module has been already).
 
 Version 1.17 (16 Sep 2005)
-   Updated ResFind from version 2.01b to latest version 2.12 (improved
-    support for truncated country names & long paths).
-   No longer requires the new (C99, APCS-32) shared C library or a version
-    of the floating point emulator that supports LFM/SFM instructions.
+- Updated ResFind from version 2.01b to latest version 2.12 (improved
+  support for truncated country names & long paths).
+- No longer requires the new (C99, APCS-32) shared C library or a version
+  of the floating point emulator that supports LFM/SFM instructions.
 
 Version 1.18 (05 Jul 2010)
-   Specified the appropriate switches to prevent the Norcroft C compiler
-    from generating unaligned memory accesses incompatible with ARM v6 and
-    later (for RISC OS on BeagleBoard).
-   Added *WimpSlot commands to ensure that there is sufficient memory in
-    which to run the ResFind utility.
-   Added a mechanism to set country-specific system variables for Castle's
-    help system (Grab2$Description, Grab2$Publisher, Grab2$Title, etc).
-   Defined several 'magic' values as named constants.
-   Anonymous enumerations are now used to define numeric constants in
-    preference to macro values.
-   Now uses standard C functions when saving tool sprites instead of
-    Acorn's library kernel functions.
-   Utilises the set_gadget_faded function introduced in release 32 of
-    CBLibrary.
-   Utilises the set_file_type function introduced in release 33 of
-    CBLibrary.
-   No longer uses function and macro names deprecated in release 34 of
-    CBLibrary.
-   Removed the automatically-generated list of dynamic dependencies from
-    the Makefile.
+- Specified the appropriate switches to prevent the Norcroft C compiler
+  from generating unaligned memory accesses incompatible with ARM v6 and
+  later (for RISC OS on BeagleBoard).
+- Added *WimpSlot commands to ensure that there is sufficient memory in
+  which to run the ResFind utility.
+- Added a mechanism to set country-specific system variables for Castle's
+  help system (Grab2$Description, Grab2$Publisher, Grab2$Title, etc).
+- Defined several 'magic' values as named constants.
+- Anonymous enumerations are now used to define numeric constants in
+  preference to macro values.
+- Now uses standard C functions when saving tool sprites instead of
+  Acorn's library kernel functions.
+- Utilises the set_gadget_faded function introduced in release 32 of
+  CBLibrary.
+- Utilises the set_file_type function introduced in release 33 of
+  CBLibrary.
+- No longer uses function and macro names deprecated in release 34 of
+  CBLibrary.
+- Removed the automatically-generated list of dynamic dependencies from
+  the Makefile.
 
 Version 1.19 (24 Sep 2015)
-   Fixed a bug where tool sprites were saved in an invalid sprite file
-    with an extra word of data at the end. The correct data size cannot be
-    obtained by subtracting the offset to the first sprite from the offset
-    to the first free word, as in a normal sprite area. Earlier versions of
-    Grab incorporated a fudge factor to solve that problem but Grab 1.18
-    did not and was therefore broken.
-   SWI "OS_SpriteOp" 12 is no longer used to save any of the Wimp's sprite
-    areas because they are too esoteric. In particular, RISC OS 6 has zero-
-    named sprites in its Wimp pool and its tool sprite area's header is at
-    a higher address than the rest of the data.
+- Fixed a bug where tool sprites were saved in an invalid sprite file
+  with an extra word of data at the end. The correct data size cannot be
+  obtained by subtracting the offset to the first sprite from the offset
+  to the first free word, as in a normal sprite area. Earlier versions of
+  Grab incorporated a fudge factor to solve that problem but Grab 1.18
+  did not and was therefore broken.
+- SWI "OS_SpriteOp" 12 is no longer used to save any of the Wimp's sprite
+  areas because they are too esoteric. In particular, RISC OS 6 has zero-
+  named sprites in its Wimp pool and its tool sprite area's header is at
+  a higher address than the rest of the data.
 
 -----------------------------------------------------------------------------
 6   Compiling the program
 ==========================
 
   If you did not receive source code with this program then you can download
-it from http://starfighter.acornarcade.com/mysite/ To compile and link the code
+it from https://github.com/chrisbazley/ To compile and link the code
 you will also require CBLibrary, ISO 'C' library headers, stubs for the
 shared C library and the flex, toolbox, event & wimp libraries supplied with
 the Acorn C/C++ Development Suite. CBLibrary is available separately from
