@@ -36,9 +36,9 @@
 #include "iconbar.h"
 
 /* CBLibrary headers */
-#include "err.h"
+#include "Err.h"
 #include "msgtrans.h"
-#include "hourglass.h"
+#include "Hourglass.h"
 #include "Macros.h"
 #include "sprformats.h"
 #include "FileUtils.h"
