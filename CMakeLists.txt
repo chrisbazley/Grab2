@@ -29,17 +29,17 @@ else()
   add_library(Grab2App Grab2.c)
 endif()
 
-target_link_libraries(Grab2 PRIVATE
+target_link_libraries(Grab2App PRIVATE
     CB
     CBOS
     OptionalAcornC
 )
 
-target_compile_definitions(Grab2 PUBLIC
+target_compile_definitions(Grab2App PUBLIC
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
     $<$<CONFIG:Release>:NDEBUG>
 )
 
-target_compile_options(Grab2 PUBLIC
+target_compile_options(Grab2App PUBLIC
     $<$<CONFIG:Release>:-O3>
 )
