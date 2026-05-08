@@ -40,7 +40,7 @@
 #include "msgtrans.h"
 #include "Hourglass.h"
 #include "Macros.h"
-#include "sprformats.h"
+#include "SprFormats.h"
 #include "FileUtils.h"
 #include "MessTrans.h"
 #include "GadgetUtil.h"
