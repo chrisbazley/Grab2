@@ -37,9 +37,4 @@ target_link_libraries(Grab2App PRIVATE
 
 target_compile_definitions(Grab2App PUBLIC
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
-    $<$<CONFIG:Release>:NDEBUG>
-)
-
-target_compile_options(Grab2App PUBLIC
-    $<$<CONFIG:Release>:-O3>
 )
