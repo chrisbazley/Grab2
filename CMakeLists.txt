@@ -10,6 +10,7 @@ FetchContent_Declare(OptionalAcornC GIT_REPOSITORY https://github.com/chrisbazle
 FetchContent_MakeAvailable(CBOS CB OptionalAcornC)
 
 set(CMAKE_C_STANDARD 99)
+set(CMAKE_XCODE_ATTRIBUTE_RUN_CLANG_STATIC_ANALYZER "YES")
 
 if(MSVC)
     # MSVC equivalent of -Wall -Wextra is /W4
