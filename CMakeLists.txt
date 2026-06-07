@@ -17,7 +17,7 @@ if(MSVC)
     add_compile_options(/W4 /wd4200 /wd4996 /wd4130)
 else()
     # For GCC and Clang
-    add_compile_options(-Wall -Wextra -Wsign-compare -pedantic)
+    add_compile_options(-Wall -Wextra -Wsign-compare -Wno-unused-parameter -pedantic)
 endif()
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
