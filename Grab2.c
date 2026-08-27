@@ -24,6 +24,10 @@
 #include <stdio.h>
 #include <assert.h>
 
+#ifdef FORTIFY
+#include "fortify.h"
+#endif
+
 /* RISC OS library files */
 #include "toolbox.h"
 #include "event.h"
@@ -44,6 +48,12 @@
 #include "FileUtils.h"
 #include "MessTrans.h"
 #include "GadgetUtil.h"
+
+#ifdef USE_OPTIONAL
+#include "Optional.h"
+#else
+#define _Optional
+#endif
 
 /* Component IDs */
 enum
@@ -114,17 +124,17 @@ int main(int argc, char *argv[])
 /* ----------------------------------------------------------------------- */
 /*                         Private functions                               */
 
-static const _kernel_oserror *save_sprite_area(const SpriteAreaHeader *area,
-                                               const char *fn)
+static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader *area,
+                                                         const char *fn)
 {
 #if SQUASH_SPRITE_AREA
-  const _kernel_oserror *e = NULL;
-  FILE *f;
+  _Optional const _kernel_oserror *e = NULL;
+  _Optional FILE *of;
 
   _kernel_last_oserror(); /* reset SCL's error recording */
 
-  f = fopen(fn, "wb");
-  if (f == NULL)
+  of = fopen(fn, "wb");
+  if (of == NULL)
   {
     e = _kernel_last_oserror();
     if (e == NULL)
@@ -132,6 +142,7 @@ static const _kernel_oserror *save_sprite_area(const SpriteAreaHeader *area,
   }
   else
   {
+    FILE *f = &*of;
     size_t written;
     const SpriteHeader *sprite;
     uint32_t valid_count = 0, valid_size = 0, n;
@@ -213,7 +224,7 @@ static void initialise(void)
   static MessagesFD mfd;
   static IdBlock id_block;
   char taskname[MaxTaskNameLen];
-  const _kernel_oserror *e;
+  _Optional const _kernel_oserror *e;
 
   hourglass_on();
   /*
@@ -223,7 +234,7 @@ static void initialise(void)
                          "<"APP_NAME"Res$Dir>", &mfd, &id_block, &wimp_version,
                          NULL, NULL);
   if (e != NULL)
-    simple_exit(e);
+    simple_exit(&*e);
 
   /*
    * Look up the localised task name and use it to initialise the error
@@ -231,11 +242,11 @@ static void initialise(void)
    */
   e = messagetrans_lookup(&mfd, "_TaskName", taskname, sizeof(taskname), NULL, 0);
   if (e != NULL)
-    simple_exit(e);
+    simple_exit(&*e);
 
   e = err_initialise(taskname, wimp_version >= MinExtErrorWimpVersion, &mfd);
   if (e != NULL)
-    simple_exit(e);
+    simple_exit(&*e);
 
   /*
    * Initialise the message lookup module.
@@ -282,7 +293,7 @@ static int auto_create_handler(int event_code, ToolboxEvent *event, IdBlock *id_
   {
     /* Listen for iconbar menu selections */
     EF(event_register_toolbox_handler(id_block->self_id, Menu_Selection,
-                                      menu_select_handler, NULL));
+                                      menu_select_handler, &(int){0}));
 
     return 1; /* claim event */
   }
@@ -291,7 +302,7 @@ static int auto_create_handler(int event_code, ToolboxEvent *event, IdBlock *id_
   {
     /* Listen for mouse clicks on application icon */
     EF(event_register_toolbox_handler(id_block->self_id, Iconbar_Clicked,
-                                      iconbar_handler, NULL));
+                                      iconbar_handler, &(int){0}));
     return 1; /* claim event */
   }
 
@@ -302,7 +313,7 @@ static int auto_create_handler(int event_code, ToolboxEvent *event, IdBlock *id_
     /* Participate in saving */
     save_id = id_block->self_id;
     EF(event_register_toolbox_handler(save_id, SaveAs_SaveToFile, save_handler,
-                                      NULL));
+                                      &save_id));
 
     /* Find dimensions of savebox */
     EF(saveas_get_window_id(0, save_id, &underlying_win));
@@ -314,13 +325,13 @@ static int auto_create_handler(int event_code, ToolboxEvent *event, IdBlock *id_
     EF(saveas_set_file_type(0, save_id, FileType_Sprite));
 
     EF(event_register_toolbox_handler(save_id, SaveAs_AboutToBeShown,
-                                      savebox_about_to_be_shown, NULL));
+                                      savebox_about_to_be_shown, &save_id));
 
     EF(event_register_toolbox_handler(underlying_win, ActionButton_Selected,
-                                      savebox_button_click, NULL));
+                                      savebox_button_click, &save_id));
 
     EF(event_register_toolbox_handler(save_id, SaveAs_SaveCompleted,
-                                      savebox_save_complete, NULL));
+                                      savebox_save_complete, &save_id));
 
     /* Read default state of radio buttons */
     EF(radiobutton_get_state(0, underlying_win, ComponentId_ROMSprites_Radio,
@@ -361,7 +372,7 @@ static int menu_select_handler(int event_code, ToolboxEvent *event, IdBlock *id_
     case Menu_ComponentId_Help:
       /* load help */
       if(_kernel_oscli("Filer_Run Grab2Res:Help") == _kernel_ERROR)
-        err_check_rep(_kernel_last_oserror());
+        E(_kernel_last_oserror());
       return 1; /* claim event */
 
     case Menu_ComponentId_Quit:
@@ -377,7 +388,7 @@ static int menu_select_handler(int event_code, ToolboxEvent *event, IdBlock *id_
 static int iconbar_handler(int event_code, ToolboxEvent *event, IdBlock *id_block, void *handle)
 {
   /* Handle click on icon bar */
-  const _kernel_oserror *e = NULL;
+  _Optional const _kernel_oserror *e = NULL;
 
   if (TEST_BITS(event->hdr.flags, Iconbar_Clicked_Select))
   {
@@ -435,7 +446,7 @@ static int save_handler(int event_code, ToolboxEvent *event, IdBlock *id_block, 
 {
   /* Save sprite pool to file, when SaveAs object tells us to */
   SaveAsSaveToFileEvent *save_to_file_block = (SaveAsSaveToFileEvent *)event;
-  const _kernel_oserror *e;
+  _Optional const _kernel_oserror *e;
   int gadget_selected;
   unsigned int flags = 0;
 
