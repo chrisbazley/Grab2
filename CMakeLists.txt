@@ -13,6 +13,9 @@ FetchContent_Declare(OptionalAcornC GIT_REPOSITORY https://github.com/chrisbazle
 
 FetchContent_MakeAvailable(CBOS CB OptionalAcornC)
 if(USE_OPTIONAL)
+    FetchContent_Declare(CBUtil GIT_REPOSITORY https://github.com/chrisbazley/CBUtilLib.git GIT_TAG main)
+    FetchContent_MakeAvailable(CBUtil)
+
     if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
         message(FATAL_ERROR
             "USE_OPTIONAL requires Christopher Bazley's Clang fork")
@@ -34,6 +37,7 @@ if(USE_FORTIFY)
     )
 
     FetchContent_MakeAvailable(Fortify)
+    link_libraries(Fortify)
 endif()
 
 set(CMAKE_C_STANDARD 99)
@@ -47,7 +51,11 @@ else()
     add_compile_options(-Wall -Wextra -Wsign-compare -Wno-unused-parameter -pedantic)
 endif()
 
-if(CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
+if(ENABLE_CLANG_TIDY)
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
+        message(FATAL_ERROR "ENABLE_CLANG_TIDY requires Clang")
+    endif()
+
     find_program(CLANG_TIDY_EXE
         NAMES clang-tidy
         HINTS "/opt/homebrew/opt/llvm/bin"
@@ -78,7 +86,7 @@ if(SYSTEM_NAME_UPPER STREQUAL "RISCOS")
   add_executable(Grab2App Grab2.c)
 else()
   # Other platforms: Compile only (no linking) to catch errors
-  add_library(Grab2App Grab2.c)
+  add_library(Grab2App OBJECT Grab2.c)
 endif()
 
 target_link_libraries(Grab2App PRIVATE
@@ -87,6 +95,6 @@ target_link_libraries(Grab2App PRIVATE
     OptionalAcornC
 )
 
-target_compile_definitions(Grab2App PUBLIC
+target_compile_definitions(Grab2App PRIVATE
     $<$<CONFIG:Debug>:DEBUG_OUTPUT>
 )
