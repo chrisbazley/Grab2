@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <errno.h>
 
 #ifdef FORTIFY
 #include "fortify.h"
@@ -175,10 +176,15 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
       new_hdr.first = sizeof(new_hdr);
       new_hdr.used = sizeof(new_hdr) + valid_size;
 
+      errno = 0;
       rewind(f);
-      written = fwrite((char *)&new_hdr + offsetof(SpriteAreaHeader, sprite_count),
-                       sizeof(new_hdr) - offsetof(SpriteAreaHeader, sprite_count),
-                       1, f);
+      if (errno == 0) {
+        written = fwrite((char *)&new_hdr + offsetof(SpriteAreaHeader, sprite_count),
+                         sizeof(new_hdr) - offsetof(SpriteAreaHeader, sprite_count),
+                         1, f);
+      } else {
+        written = 0;
+      }
     }
 
     if (written != 1)
