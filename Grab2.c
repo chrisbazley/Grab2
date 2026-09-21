@@ -130,11 +130,10 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
 {
 #if SQUASH_SPRITE_AREA
   _Optional const _kernel_oserror *e = NULL;
-  _Optional FILE *of;
 
   _kernel_last_oserror(); /* reset SCL's error recording */
 
-  of = fopen(fn, "wb");
+  _Optional FILE *of = fopen(fn, "wb");
   if (of == NULL)
   {
     e = _kernel_last_oserror();
@@ -144,12 +143,11 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
   else
   {
     FILE *f = &*of;
-    size_t written;
     const SpriteHeader *sprite;
     uint32_t valid_count = 0, valid_size = 0, n;
 
     /* Leave room for a header at the start of the file */
-    written = !fseek(f,
+    size_t written = !fseek(f,
                      sizeof(SpriteAreaHeader) - offsetof(SpriteAreaHeader, sprite_count),
                      SEEK_SET);
 
@@ -230,13 +228,12 @@ static void initialise(void)
   static MessagesFD mfd;
   static IdBlock id_block;
   char taskname[MaxTaskNameLen];
-  _Optional const _kernel_oserror *e;
 
   hourglass_on();
   /*
    * register ourselves with the Toolbox.
    */
-  e = toolbox_initialise(0, KnownWimpVersion, &wimp_messages, &toolbox_events,
+  _Optional const _kernel_oserror *e = toolbox_initialise(0, KnownWimpVersion, &wimp_messages, &toolbox_events,
                          "<"APP_NAME"Res$Dir>", &mfd, &id_block, &wimp_version,
                          NULL, NULL);
   if (e != NULL)
@@ -452,14 +449,13 @@ static int save_handler(int event_code, ToolboxEvent *event, IdBlock *id_block, 
 {
   /* Save sprite pool to file, when SaveAs object tells us to */
   SaveAsSaveToFileEvent *save_to_file_block = (SaveAsSaveToFileEvent *)event;
-  _Optional const _kernel_oserror *e;
   int gadget_selected;
   unsigned int flags = 0;
 
   hourglass_on();
 
   /* Which should we save? */
-  e = radiobutton_get_state(0, underlying_win, ComponentId_ROMSprites_Radio, 0,
+  _Optional const _kernel_oserror *e = radiobutton_get_state(0, underlying_win, ComponentId_ROMSprites_Radio, 0,
                             &gadget_selected);
   if (e == NULL)
   {
