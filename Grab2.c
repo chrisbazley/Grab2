@@ -47,6 +47,7 @@
 #include "Macros.h"
 #include "SprFormats.h"
 #include "FileUtils.h"
+#include "OSSpriteOp.h"
 #include "MessTrans.h"
 #include "GadgetUtil.h"
 
@@ -204,8 +205,7 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
 
   return e;
 #else
-  return _swix(OS_SpriteOp, _INR(0, 2),
-               SPRITEOP_USERAREA_SPRNAME + SPRITEOP_SAVE_AREA, area, fn);
+  return os_sprite_op_save(area, fn);
 #endif
 }
 
