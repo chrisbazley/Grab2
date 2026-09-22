@@ -281,6 +281,11 @@ static void initialise(void)
 
 static int wimp_quit_handler(WimpMessage *message,void *handle)
 {
+  assert(message != NULL);
+  assert(message->hdr.action_code == Wimp_MQuit);
+  NOT_USED(message);
+  NOT_USED(handle);
+
   exit(EXIT_SUCCESS);
   return 1; /* claim event */
 }
