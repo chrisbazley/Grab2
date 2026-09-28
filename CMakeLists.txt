@@ -4,6 +4,7 @@ project(Grab2 C)
 option(USE_OPTIONAL "Enable the _Optional qualifier" OFF)
 option(USE_FORTIFY "Enable Fortify memory-allocation checking" OFF)
 option(ENABLE_CLANG_TIDY "Run clang-tidy during compilation" OFF)
+option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
 include(FetchContent)
 
@@ -45,13 +46,21 @@ set(CMAKE_XCODE_ATTRIBUTE_RUN_CLANG_STATIC_ANALYZER "YES")
 
 if(MSVC)
     # MSVC equivalent of -Wall -Wextra is /W4
-    add_compile_options(/W4 /wd4200 /wd4996 /wd4130)
+    add_compile_options(/W4 /wd4200 /wd4996 /wd4130 /wd4100 /wd4702)
 else()
     # For GCC and Clang
     add_compile_options(-Wall -Wextra -Wsign-compare -Wno-unused-parameter -pedantic)
 endif()
 
-if(ENABLE_CLANG_TIDY)
+if(WARNINGS_AS_ERRORS AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    if(MSVC)
+        add_compile_options(/WX)
+    else()
+        add_compile_options(-Werror)
+    endif()
+endif()
+
+if(ENABLE_CLANG_TIDY AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang|AppleClang")
         message(FATAL_ERROR "ENABLE_CLANG_TIDY requires Clang")
     endif()
@@ -61,22 +70,23 @@ if(ENABLE_CLANG_TIDY)
         HINTS "/opt/homebrew/opt/llvm/bin"
     )
 
-    if(CLANG_TIDY_EXE)
-        # 1. Base Clang-Tidy call configuration
-        set(CLANG_TIDY_ARGS "${CLANG_TIDY_EXE};-checks=-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*")
-
-        # 2. On Apple machines, append the current platform SDK directory path
-        if(APPLE)
-            execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE MAC_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-            list(APPEND CLANG_TIDY_ARGS "--extra-arg=-isysroot" "--extra-arg=${MAC_SDK_PATH}")
-        endif()
-
-        # 3. Apply the modified list to CMake
-        set(CMAKE_C_CLANG_TIDY "${CLANG_TIDY_ARGS}")
-        message(STATUS "Clang-Tidy Static Analyzer enabled automatically.")
-    else()
-        message(STATUS "clang-tidy binary not found. Skipping analysis pass.")
+    if(NOT CLANG_TIDY_EXE)
+        message(FATAL_ERROR
+            "ENABLE_CLANG_TIDY is ON, but clang-tidy was not found")
     endif()
+
+    # 1. Base Clang-Tidy call configuration
+    set(CLANG_TIDY_ARGS "${CLANG_TIDY_EXE};-checks=-*,clang-analyzer-*,-clang-analyzer-security.insecureAPI.*;--warnings-as-errors=clang-analyzer-*")
+
+    # 2. On Apple machines, append the current platform SDK directory path
+    if(APPLE)
+        execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE MAC_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+        list(APPEND CLANG_TIDY_ARGS "--extra-arg=-isysroot" "--extra-arg=${MAC_SDK_PATH}")
+    endif()
+
+    # 3. Apply the modified list to CMake
+    set(CMAKE_C_CLANG_TIDY "${CLANG_TIDY_ARGS}")
+    message(STATUS "Clang-Tidy Static Analyzer enabled automatically.")
 endif()
 
 string(TOUPPER "${CMAKE_SYSTEM_NAME}" SYSTEM_NAME_UPPER)
