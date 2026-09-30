@@ -186,15 +186,13 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
       }
     }
 
-    if (written != 1)
+    /* Close output file */
+    if (fclose(f) != 0 || written != 1)
     {
       e = _kernel_last_oserror();
       if (e == NULL)
         e = msgs_error_subn(DUMMY_ERRNO, "WriteFail", 1, fn);
     }
-
-    /* Close output file */
-    fclose(f);
 
     if (e == NULL)
       e = set_file_type(fn, FileType_Sprite);
