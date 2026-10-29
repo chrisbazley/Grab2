@@ -17,6 +17,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* History:
+  CJB: 29-Oct-26: Make unused null event-handler contexts explicit with casts.
+*/
+
 /* ANSI library files */
 #include <stddef.h>
 #include <stdlib.h>
@@ -267,10 +271,10 @@ static void initialise(void)
                      Wimp_Poll_GainCaretMask));
 
   EF(event_register_toolbox_handler(-1, Toolbox_ObjectAutoCreated,
-                                    auto_create_handler, 0));
+                                    auto_create_handler, (void *)NULL));
 
-  EF(event_register_toolbox_handler(-1, Toolbox_Error, error_handler, 0));
-  EF(event_register_message_handler(Wimp_MQuit, wimp_quit_handler, 0));
+  EF(event_register_toolbox_handler(-1, Toolbox_Error, error_handler, (void *)NULL));
+  EF(event_register_message_handler(Wimp_MQuit, wimp_quit_handler, (void *)NULL));
 
   hourglass_off();
 }
