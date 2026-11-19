@@ -173,18 +173,14 @@ static _Optional const _kernel_oserror *save_sprite_area(const SpriteAreaHeader 
     if (written == 1)
     {
       /* Write replacement header to file (without first word). */
-      SpriteAreaHeader new_hdr;
-
-      new_hdr.sprite_count = valid_count;
-      new_hdr.first = sizeof(new_hdr);
-      new_hdr.used = sizeof(new_hdr) + valid_size;
+      const uint32_t new_hdr[] = {
+        valid_count, sizeof(SpriteAreaHeader), sizeof(SpriteAreaHeader) + valid_size
+      };
 
       errno = 0;
       rewind(f);
       if (errno == 0) {
-        written = fwrite((char *)&new_hdr + offsetof(SpriteAreaHeader, sprite_count),
-                         sizeof(new_hdr) - offsetof(SpriteAreaHeader, sprite_count),
-                         1, f);
+        written = fwrite(new_hdr, sizeof(new_hdr), 1, f);
       } else {
         written = 0;
       }
